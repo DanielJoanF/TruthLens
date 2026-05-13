@@ -7,19 +7,35 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
+# Dependency directories
+node_modules/
+jspm_packages/
 
-# Editor directories and files
+# Build outputs
+dist/
+dist-ssr/
+build/
+
+# IDEs and Editors
 .vscode/*
 !.vscode/extensions.json
-.idea
-.DS_Store
+.idea/
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+.DS_Store
+
+# Secrets and Environment Variables
 .env
+.env.local
+.env.*.local
+# Jika ingin lebih simpel: .env*
+# Tapi pastikan .env.example tidak diignore jika Anda punya
+
+# Testing
+/coverage
+
+# OS files
+Thumbs.db
