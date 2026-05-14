@@ -14,28 +14,22 @@ export async function runGeminiAnalysis(text) {
     systemInstruction,
     generationConfig: {
       responseMimeType: 'application/json',
-      temperature: 0.4,
+      temperature: 0.2, // Reduced temperature for more consistent JSON
       maxOutputTokens: 4096,
     },
   });
 
   const result = await model.generateContent(userPrompt);
-  const response = result.response;
-  const responseText = response.text();
+  const responseText = result.response.text().trim();
 
   // Parse the JSON response
-  let parsed;
   try {
-    parsed = JSON.parse(responseText);
+    // If the model wrapped it in markdown code blocks even with responseMimeType
+    const cleaned = responseText.replace(/^```json\s*|```$/g, '').trim();
+    return JSON.parse(cleaned);
   } catch (parseErr) {
-    // Try to extract JSON from markdown fences if model wraps it
-    const jsonMatch = responseText.match(/```(?:json)?\s*([\s\S]*?)```/);
-    if (jsonMatch) {
-      parsed = JSON.parse(jsonMatch[1].trim());
-    } else {
-      console.error('[Gemini] Failed to parse response:', responseText.slice(0, 500));
-      throw new Error('Gemini returned invalid JSON');
-    }
+    console.error('[Gemini] Failed to parse response:', responseText.slice(0, 500));
+    throw new Error('Gemini returned invalid JSON');
   }
 
   return parsed;
