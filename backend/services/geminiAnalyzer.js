@@ -1,10 +1,6 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { buildAnalysisPrompt } from '../prompts/analysisPrompt.js';
 
-/**
- * Send text to Gemini 1.5 Flash and get structured manipulation analysis.
- * Returns raw parsed JSON from the model.
- */
 export async function runGeminiAnalysis(text) {
   const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
   const { systemInstruction, userPrompt } = buildAnalysisPrompt(text);
