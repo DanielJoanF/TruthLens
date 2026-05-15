@@ -6,6 +6,8 @@ import HighlightedText from './HighlightedText';
 import NeutralRewriteCard from './NeutralRewriteCard';
 import RhetoricChart from './RhetoricChart';
 import { analyzeText } from '../utils/analyzer';
+import { saveAnalysisToDatabase } from '../utils/db';
+import { useAuth } from '../contexts/AuthContext';
 import { ScanEye, Inbox } from 'lucide-react';
 import clsx from 'clsx';
 
@@ -13,6 +15,7 @@ export default function AnalyzerPage() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [results, setResults] = useState(null);
   const [animKey, setAnimKey] = useState(0);
+  const { user } = useAuth();
 
   async function handleAnalyze(text) {
     setIsAnalyzing(true);
@@ -22,6 +25,11 @@ export default function AnalyzerPage() {
       const data = await analyzeText(text);
       setResults(data);
       setAnimKey((k) => k + 1);
+
+      // Simpan hasil ke database secara background
+      if (user?.id) {
+        saveAnalysisToDatabase(user.id, text, data);
+      }
     } catch (err) {
       console.error('Analysis failed:', err);
     } finally {

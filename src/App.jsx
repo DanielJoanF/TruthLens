@@ -6,6 +6,8 @@ import HistoryPage from './components/HistoryPage';
 import SavedPage from './components/SavedPage';
 import InsightsPage from './components/InsightsPage';
 import SettingsPage from './components/SettingsPage';
+import AuthPage from './components/AuthPage';
+import { useAuth } from './contexts/AuthContext';
 
 const PAGE_TITLES = {
   analyzer: 'Analyzer',
@@ -15,20 +17,15 @@ const PAGE_TITLES = {
   settings: 'Settings',
 };
 
-function renderPage(nav) {
-  switch (nav) {
-    case 'analyzer': return <AnalyzerPage />;
-    case 'history': return <HistoryPage />;
-    case 'saved': return <SavedPage />;
-    case 'insights': return <InsightsPage />;
-    case 'settings': return <SettingsPage />;
-    default: return <AnalyzerPage />;
-  }
-}
 
 export default function App() {
   const [activeNav, setActiveNav] = useState('analyzer');
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { session } = useAuth();
+
+  if (!session) {
+    return <AuthPage />;
+  }
 
   return (
     <div className="flex h-screen overflow-hidden bg-bg-primary">
@@ -77,7 +74,13 @@ export default function App() {
 
         {/* Page content */}
         <main className="flex-1 overflow-y-auto p-5 lg:p-6">
-          {renderPage(activeNav)}
+          <div className={activeNav === 'analyzer' ? 'block h-full' : 'hidden'}>
+            <AnalyzerPage />
+          </div>
+          {activeNav === 'history' && <HistoryPage />}
+          {activeNav === 'saved' && <SavedPage />}
+          {activeNav === 'insights' && <InsightsPage />}
+          {activeNav === 'settings' && <SettingsPage />}
         </main>
       </div>
     </div>

@@ -9,8 +9,10 @@ import {
   Shield,
   X,
   Menu,
+  LogOut,
 } from 'lucide-react';
 import clsx from 'clsx';
+import { useAuth } from '../contexts/AuthContext';
 
 const NAV_ITEMS = [
   { id: 'analyzer', label: 'Analyzer', icon: ScanText },
@@ -21,6 +23,10 @@ const NAV_ITEMS = [
 ];
 
 export default function Sidebar({ activeNav, onNavChange, mobileOpen, onMobileClose }) {
+  const { user, signOut } = useAuth();
+  const userInitial = user?.email ? user.email.charAt(0).toUpperCase() : 'U';
+  const displayEmail = user?.email || 'User';
+
   return (
     <>
       {/* Mobile overlay */}
@@ -103,17 +109,25 @@ export default function Sidebar({ activeNav, onNavChange, mobileOpen, onMobileCl
         </nav>
 
         {/* Footer */}
-        <div className="px-4 pb-5 pt-3 border-t border-white/5">
+        <div className="px-4 pb-5 pt-3 border-t border-white/5 space-y-3">
           <div className="flex items-center gap-3 px-2 py-2">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-accent-indigo to-purple-600 flex items-center justify-center text-sm font-bold text-white">
-              U
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-accent-indigo to-purple-600 flex items-center justify-center text-sm font-bold text-white uppercase">
+              {userInitial}
             </div>
             <div className="min-w-0">
-              <p className="text-sm font-medium text-text-primary truncate">User</p>
-              <p className="text-xs text-text-muted truncate">Pro Plan</p>
+              <p className="text-sm font-medium text-text-primary truncate">{displayEmail}</p>
+              <p className="text-xs text-text-muted truncate">User Plan</p>
             </div>
             <div className="ml-auto w-2 h-2 rounded-full bg-risk-green flex-shrink-0" />
           </div>
+          
+          <button 
+            onClick={signOut}
+            className="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-text-secondary hover:text-white bg-white/5 hover:bg-white/10 rounded-lg transition-colors"
+          >
+            <LogOut className="w-4 h-4" />
+            <span>Sign Out</span>
+          </button>
         </div>
       </aside>
     </>
